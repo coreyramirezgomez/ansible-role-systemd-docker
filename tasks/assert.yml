@@ -1,0 +1,6 @@
+- name: "assert that systemd_docker_unit_name is defined"
+  assert:
+    that: systemd_docker_unit_name is defined
+- name: "assert that systemd_docker_unit_description is defined"
+  assert:
+    that: systemd_docker_unit_description is defined

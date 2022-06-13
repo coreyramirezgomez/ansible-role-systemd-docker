@@ -1,0 +1,60 @@
+## Event Handling
+# issue a daemon-reload
+systemd_docker_daemon_reload_enabled: true
+# trigger downsteam
+systemd_docker_daemon_reload_trigger_enabled: true
+systemd_docker_manage_service: false
+# restart the service
+systemd_docker_service_restart_enabled: false
+# enable the service
+systemd_docker_service_enabled: false
+
+## Template Handling
+# Default systemd unit template
+systemd_docker_unit_template: "docker-compose.j2"
+# systemd_docker_unit_template: "docker.j2"
+# Default systemd unit template extension
+systemd_docker_unit_extension: "service"
+# Default path to docker-compose files - will be created if doesn't exist.
+systemd_docker_compose_path: "/etc/docker-compose"
+# Default path to of systemd unit files
+systemd_docker_systemd_etc_path: "/etc/systemd/system"
+# Default targets to set dependencies on
+systemd_docker_after_target: docker.service
+systemd_docker_require_target: docker.service
+
+## Required binary paths
+# Default location of systemd binary
+systemd_docker_systemctl_bin: "/usr/bin/systemctl"
+# Default location of docker-compose binary
+systemd_docker_compose_bin: "/bin/docker-compose"
+# Default location of docker binary
+systemd_docker_bin: "/bin/docker"
+
+## Container handling
+# Transfer containers to host.
+systemd_docker_transfer_containers: false
+# List of containers.
+systemd_docker_containers: []
+#  - 'registry.kernel.corp/systems/sentry:9.1'
+
+## Data-driven resources
+systemd_docker_files: {}
+systemd_docker_copy: {}
+systemd_docker_templates: {}
+## Variables without defaults
+## Unit Name (REQUIRED)
+##   name of the unit / compose file
+# systemd_docker_unit_name:
+
+## Unit Description (REQUIRED)
+##   description that should be included with the unit
+# systemd_docker_unit_description:
+
+## What to notify downstream via the reload_trigger
+# systemd_docker_notify_on_reload: systemd_docker_daemon_reload
+
+## Unit File Parameters
+## TimeoutSec parameter inside the unit file
+# systemd_docker_timeout_seconds:
+

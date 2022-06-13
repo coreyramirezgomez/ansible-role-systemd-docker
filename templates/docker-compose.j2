@@ -1,0 +1,26 @@
+[Unit]
+Description={{ systemd_docker_unit_description }}
+After={{ systemd_docker_after_target }}
+Requires={{ systemd_docker_require_target }}
+
+[Service]
+Type=simple
+Restart=always
+{% if systemd_docker_timeout_seconds is defined %}
+TimeoutSec={{ systemd_docker_timeout_seconds }}
+{% endif %}
+{% if systemd_docker_unit_syslog_identifier is defined %}
+SyslogIdentifier={{ systemd_docker_unit_syslog_identifier }}
+{% endif %}
+{% if not systemd_docker_transfer_containers %}
+ExecStartPre=-{{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml pull
+{% endif %}
+{% if systemd_docker_compose_scale is defined %}
+ExecStart={{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml -p %p up --no-color --scale {{ systemd_docker_compose_scale }}
+{% else %}
+ExecStart={{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml -p %p up --no-color
+{% endif %}
+ExecStop={{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml -p %p down
+
+[Install]
+WantedBy=multi-user.target

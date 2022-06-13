@@ -1,0 +1,18 @@
+---
+version: '3.5'
+services:
+  openvpn: 
+    container_name: openvpn
+    image: {{ openvpn_docker_registry }}/openvpn:{{ openvpn_tag }}
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '0.0.0.0:1194:1194/udp'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - '{{ openvpn_base_directory }}:/etc/openvpn:rw'

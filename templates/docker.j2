@@ -1,0 +1,20 @@
+[Unit]
+Description={{ systemd_docker_unit_description }}
+After={{ systemd_docker_after_target }}
+Requires={{ systemd_docker_require_target }}
+
+[Service]
+Type=simple
+Restart=always
+{% if systemd_docker_timeout_seconds is defined %}
+TimeoutSec={{ systemd_docker_timeout_seconds }}
+{% endif %}
+{% if systemd_docker_unit_syslog_identifier is defined %}
+SyslogIdentifier={{ systemd_docker_unit_syslog_identifier }}
+{% endif %}
+ExecStartPre=-{{ systemd_docker_bin }} pull {{ systemd_docker_container_image }}
+ExecStart={{ systemd_docker_bin }} run -t --rm --name {{ systemd_docker_container_name | default("%p") }} {{ systemd_docker_arguments | default("") }} {{ systemd_docker_container_image }} {{ systemd_docker_command }} 
+ExecStop={{ systemd_docker_bin }} stop %p
+
+[Install]
+WantedBy=multi-user.target

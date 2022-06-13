@@ -1,0 +1,33 @@
+server {{ openvpn_server_subnet.subnet }} {{ openvpn_server_subnet.netmask }}
+verb 3
+key /etc/openvpn/pki/private/{{ openvpn_server_cn }}.key
+ca /etc/openvpn/pki/ca.crt
+cert /etc/openvpn/pki/issued/{{ openvpn_server_cn }}.crt
+dh /etc/openvpn/pki/dh.pem
+tls-auth /etc/openvpn/pki/ta.key
+key-direction 0
+keepalive 10 60
+persist-key
+persist-tun
+
+proto udp
+# Rely on Docker to do port mapping, internally always 1194
+port 1194
+dev tun0
+status /tmp/openvpn-status.log
+
+user nobody
+group nogroup
+comp-lzo no
+
+### Route Configurations Below
+{% for route in openvpn_routes %}
+route {{ route.subnet }} {{ route.netmask }}
+{% endfor %}
+
+### Push Configurations Below
+push "block-outside-dns"
+{% for server in openvpn_dns_servers %}
+push "dhcp-option DNS {{ server }}"
+{% endfor %}
+push "comp-lzo no"

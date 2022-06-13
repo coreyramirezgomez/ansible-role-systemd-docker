@@ -1,0 +1,18 @@
+- name: "Reload systemd unit files"
+  command: "{{ systemd_docker_systemctl_bin }} daemon-reload"
+  become: true
+  when: systemd_docker_daemon_reload_enabled
+  listen: systemd_docker_daemon_reload
+  notify:
+    - systemd_docker_daemon_reloaded_fact
+- name: "Set systemd_docker_daemon_reloaded to true"
+  set_fact:
+    systemd_docker_daemon_reloaded: true
+  listen: systemd_docker_daemon_reloaded_fact
+- name: "Restart service"
+  service:
+    name: "{{ systemd_docker_unit_name }}"
+    state: restarted
+  become: true
+  when: systemd_docker_service_restart_enabled
+  listen: systemd_docker_service_restart

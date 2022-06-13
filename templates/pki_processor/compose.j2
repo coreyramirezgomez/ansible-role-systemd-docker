@@ -1,0 +1,42 @@
+---
+version: '3.5'
+services:
+  1password-connect-api:
+    container_name: 1password_api 
+    image: {{ pki_processor_docker_registry }}/1password/api:{{ op_connect_tag }}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - '{{ pki_processor_base_directory }}/config/1password-credentials.json:/home/opuser/.op/1password-credentials.json:ro'
+      - '{{ pki_processor_base_directory }}/data/op:/home/opuser/.op/data:rw'
+  1password-connect-sync:
+    container_name: 1password_sync
+    image: {{ pki_processor_docker_registry }}/1password/sync:{{ op_connect_tag }}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - '{{ pki_processor_base_directory }}/config/1password-credentials.json:/home/opuser/.op/1password-credentials.json:ro'
+      - '{{ pki_processor_base_directory }}/data/op:/home/opuser/.op/data:rw'
+  pki_processor:
+    env_file: '{{ pki_processor_base_directory }}/config/env'
+    container_name: pki_processor 
+    image: {{ pki_processor_docker_registry }}/pki-processor:{{ pki_processor_tag }}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - '{{ pki_processor_base_directory }}/data/device_states.json:/opt/device_states.json:rw'
+      - '{{ pki_processor_base_directory }}/config/ca.crt:/opt/ca.crt:ro'
+      - '{{ pki_processor_base_directory }}/config/ca.key:/opt/ca.key:ro'
+      - '{{ pki_processor_base_directory }}/config/ta.key:/opt/ta.key:ro'

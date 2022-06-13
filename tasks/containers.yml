@@ -1,0 +1,30 @@
+## Pull, export and transfer containers to remote destinations
+- name: "Pull container ({{ item }}) on local"
+  command: "docker pull {{ item }}"
+  delegate_to: 127.0.0.1
+  become: true
+  ignore_errors: true
+- name: "Export container ({{ item }}) on local"
+  command: "docker save -o /tmp/export.tar {{ item }}"
+  delegate_to: 127.0.0.1
+  become: false
+- name: "Copy exported container to remote"
+  copy:
+    dest: "/tmp/export.tar"
+    src: "/tmp/export.tar"
+- name: "Import container on remote"
+  command: "docker load -i /tmp/export.tar"
+- name: cleanup remote export
+  file:
+    path: "/tmp/export.tar"
+    state: absent
+- name: "Cleanup export on local"
+  file:
+    path: "/tmp/export.tar"
+    state: absent
+  delegate_to: 127.0.0.1
+  become: false
+- name: "Remove container on local"
+  command: docker rmi {{ item }}
+  delegate_to: 127.0.0.1
+  become: true

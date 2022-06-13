@@ -1,0 +1,15 @@
+---
+dependencies: []
+galaxy_info:
+  author: Corey Ramirez-Gomez
+  role_name: systemd_docker
+  description: Deploy dockerized service and manage with systemd unit files.
+  license: MIT
+  min_ansible_version: 2.1
+  platforms:
+    - name: GenericLinux
+      versions:
+        - all
+  galaxy_tags:
+    - docker
+    - systemd
