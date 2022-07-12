@@ -9,6 +9,10 @@
     owner: root
     group: docker
     mode: 0770
+- name: Update systemd_docker_after_targets and systemd_docker_require_targets facts
+  set_fact:
+    systemd_docker_after_targets: "{{ [ 'docker.service' ] + systemd_docker_after_targets | unique }}"
+    systemd_docker_require_targets: "{{ [ 'docker.service' ] + systemd_docker_after_targets | unique }}"
 - name: "[{{ systemd_docker_unit_name }}] deploy systemd unit file"
   template:
     src: "{{ systemd_docker_unit_template }}"

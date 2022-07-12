@@ -19,9 +19,11 @@ systemd_docker_unit_extension: "service"
 systemd_docker_compose_path: "/etc/docker-compose"
 # Default path to of systemd unit files
 systemd_docker_systemd_etc_path: "/etc/systemd/system"
-# Default targets to set dependencies on
-systemd_docker_after_target: docker.service
-systemd_docker_require_target: docker.service
+# Targets to set dependencies on, docker.service is included automatically.
+systemd_docker_after_targets: []
+systemd_docker_require_targets: []
+# Default restart action for service.
+systemd_docker_restart_action: "always"
 
 ## Required binary paths
 # Default location of systemd binary

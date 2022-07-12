@@ -1,11 +1,12 @@
 [Unit]
 Description={{ systemd_docker_unit_description }}
-After={{ systemd_docker_after_target }}
-Requires={{ systemd_docker_require_target }}
+After={% for svc in systemd_docker_after_targets %}{{ svc }}{% if not loop.last %},{% endif %}{% endfor %}
+
+Requires={% for svc in systemd_docker_require_targets %}{{ svc }}{% if not loop.last %},{% endif %}{% endfor %}
 
 [Service]
 Type=simple
-Restart=always
+Restart={{ systemd_docker_restart_action }}
 {% if systemd_docker_timeout_seconds is defined %}
 TimeoutSec={{ systemd_docker_timeout_seconds }}
 {% endif %}
