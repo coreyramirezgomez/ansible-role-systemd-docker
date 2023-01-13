@@ -1,8 +1,6 @@
 ## Event Handling
 # issue a daemon-reload
 systemd_docker_daemon_reload_enabled: true
-# trigger downsteam
-systemd_docker_daemon_reload_trigger_enabled: true
 systemd_docker_manage_service: false
 # restart the service
 systemd_docker_service_restart_enabled: false

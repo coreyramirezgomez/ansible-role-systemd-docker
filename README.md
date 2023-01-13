@@ -13,7 +13,7 @@ Example Playbook
 ```
 - hosts: localhost
   roles:
-    - role: coreyramirezgomez.systemd_docker
+    - role: crg.systemd_docker
       systemd_docker_unit_name: "nginx"
       systemd_docker_unit_description: "Containerized nginx service"
       systemd_docker_service_enabled: true

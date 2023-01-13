@@ -1,7 +1,5 @@
 - name: Assertions
   include_tasks: assert.yml
-- name: "[{{ systemd_docker_unit_name }}] set facts"
-  include_tasks: facts.yml
 - name: "Create systemd_docker_compose_path"
   file:
     state: directory
@@ -9,10 +7,10 @@
     owner: root
     group: docker
     mode: 0770
-- name: Update systemd_docker_after_targets and systemd_docker_require_targets facts
-  set_fact:
-    systemd_docker_after_targets: "{{ [ 'docker.service' ] + systemd_docker_after_targets | unique }}"
-    systemd_docker_require_targets: "{{ [ 'docker.service' ] + systemd_docker_after_targets | unique }}"
+# - name: Update systemd_docker_after_targets and systemd_docker_require_targets facts
+#   set_fact:
+#     systemd_docker_after_targets: "{{ [ 'docker.service' ] + systemd_docker_after_targets | unique }}"
+#     systemd_docker_require_targets: "{{ [ 'docker.service' ] + systemd_docker_require_targets | unique }}"
 - name: "[{{ systemd_docker_unit_name }}] deploy systemd unit file"
   template:
     src: "{{ systemd_docker_unit_template }}"
@@ -20,39 +18,37 @@
     owner: root
     group: root
     mode: 0640
-  notify:
-    - systemd_docker_daemon_reload
-    - systemd_docker_daemon_reloaded_fact
+
+- name: "[{{ systemd_docker_unit_template }}] Reload systemd unit files"
+  command: "{{ systemd_docker_systemctl_bin }} daemon-reload"
+  become: true
+  when: systemd_docker_daemon_reload_enabled
+
 - name: "[{{ systemd_docker_unit_name }}] Transfer containers"
   include: "containers.yml"
   with_items: "{{ systemd_docker_containers }}"
   when: systemd_docker_transfer_containers
+
 - name: "[{{ systemd_docker_unit_name }}] Deploy file resources"
   file: "{{ item.value }}"
   with_dict: "{{ systemd_docker_files }}"
-  notify: systemd_docker_service_restart
 - name: "[{{ systemd_docker_unit_name }}] Deploy copy resources"
   copy: "{{ item.value }}"
   with_dict: "{{ systemd_docker_copy }}"
-  notify: systemd_docker_service_restart
 - name: "[{{ systemd_docker_unit_name }}] Deploy template resources"
   template: "{{ item.value }}"
   with_dict: "{{ systemd_docker_templates }}"
-  notify: systemd_docker_service_restart
-- name: "[{{ systemd_docker_unit_name }}] Force all handlers to run before continuing"
-  meta: flush_handlers
+
+- name: "Restart service"
+  service:
+    name: "{{ systemd_docker_unit_name }}"
+    state: restarted
+  become: true
+  when: systemd_docker_service_restart_enabled
+
 - name: "[{{ systemd_docker_unit_name }}] Enforce service state"
   service:
     name: "{{ systemd_docker_unit_name }}"
     enabled: "{{ systemd_docker_service_enabled }}"
   become: true
   when: systemd_docker_manage_service
-- name: "[{{ systemd_docker_unit_name }}] Trigger downstream handlers"
-  debug:
-    msg: "trigger {{ systemd_docker_notify_on_reload }}"
-  notify: "{{ systemd_docker_notify_on_reload }}"
-  when:
-    - systemd_docker_notify_on_reload is defined
-    - systemd_docker_daemon_reload_trigger_enabled
-    - systemd_docker_daemon_reloaded
-  changed_when: true
