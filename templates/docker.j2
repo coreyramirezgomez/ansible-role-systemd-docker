@@ -1,6 +1,8 @@
 [Unit]
 Description={{ systemd_docker_unit_description }}
+
 After={{ systemd_docker_after_target }}
+
 Requires={{ systemd_docker_require_target }}
 
 [Service]

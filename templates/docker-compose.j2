@@ -1,9 +1,11 @@
 [Unit]
 Description={{ systemd_docker_unit_description }}
+
 After={% for svc in systemd_docker_after_targets %}{{ svc }}{% if not loop.last %},{% endif %}{% endfor %}
 
 Requires={% for svc in systemd_docker_require_targets %}{{ svc }}{% if not loop.last %},{% endif %}{% endfor %}
 
+{{ systemd_docker_unit_extras }}
 [Service]
 Type=simple
 Restart={{ systemd_docker_restart_action }}
@@ -14,7 +16,9 @@ TimeoutSec={{ systemd_docker_timeout_seconds }}
 SyslogIdentifier={{ systemd_docker_unit_syslog_identifier }}
 {% endif %}
 {% if not systemd_docker_transfer_containers %}
+{% if not systemd_docker_disable_image_pull %}
 ExecStartPre=-{{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml pull
+{% endif %}
 {% endif %}
 {% if systemd_docker_compose_scale is defined %}
 ExecStart={{ systemd_docker_compose_bin }} -f {{ systemd_docker_compose_path }}/%p.yml -p %p up --no-color --scale {{ systemd_docker_compose_scale }}

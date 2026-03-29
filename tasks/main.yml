@@ -25,7 +25,7 @@
   when: systemd_docker_daemon_reload_enabled
 
 - name: "[{{ systemd_docker_unit_name }}] Transfer containers"
-  include: "containers.yml"
+  include_tasks: "containers.yml"
   with_items: "{{ systemd_docker_containers }}"
   when: systemd_docker_transfer_containers
 

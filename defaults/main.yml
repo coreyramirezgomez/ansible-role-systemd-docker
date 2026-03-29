@@ -20,6 +20,7 @@ systemd_docker_systemd_etc_path: "/etc/systemd/system"
 # Targets to set dependencies on, docker.service is included automatically.
 systemd_docker_after_targets: []
 systemd_docker_require_targets: []
+systemd_docker_unit_extras: ""
 # Default restart action for service.
 systemd_docker_restart_action: "always"
 
@@ -34,6 +35,8 @@ systemd_docker_bin: "/bin/docker"
 ## Container handling
 # Transfer containers to host.
 systemd_docker_transfer_containers: false
+# Disable pulling containers in the event they are generated on the host already.
+systemd_docker_disable_image_pull: false
 # List of containers.
 systemd_docker_containers: []
 #  - 'registry.kernel.corp/systems/sentry:9.1'
